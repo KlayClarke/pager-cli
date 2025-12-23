@@ -1,0 +1,16 @@
+name: CI
+on: [push]
+jobs:
+  google-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v5
+      - name: Set up test env
+        run: |
+            sudo apt update
+            sudo apt install cmake g++ make
+      - name: Build solution
+        run: cmake -S . -B ./build && cmake --build ./build
+      - name: Run tests
+        run: ctest --test-dir ./build
