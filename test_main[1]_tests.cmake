@@ -1,5 +1,0 @@
-add_test([=[HelloTest.Inequality]=]  /home/klayclarke/Documents/Code/pager-cli/test_main [==[--gtest_filter=HelloTest.Inequality]==] --gtest_also_run_disabled_tests)
-set_tests_properties([=[HelloTest.Inequality]=]  PROPERTIES WORKING_DIRECTORY /home/klayclarke/Documents/Code/pager-cli SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
-add_test([=[HelloTest.Equality]=]  /home/klayclarke/Documents/Code/pager-cli/test_main [==[--gtest_filter=HelloTest.Equality]==] --gtest_also_run_disabled_tests)
-set_tests_properties([=[HelloTest.Equality]=]  PROPERTIES WORKING_DIRECTORY /home/klayclarke/Documents/Code/pager-cli SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
-set(  test_main_TESTS HelloTest.Inequality HelloTest.Equality)
