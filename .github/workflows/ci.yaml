@@ -3,6 +3,8 @@ on: [push]
 jobs:
   google-test:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: read
     steps:
       - name: Check out repository code
         uses: actions/checkout@v5
