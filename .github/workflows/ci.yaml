@@ -14,3 +14,8 @@ jobs:
         run: cmake -S . -B ./build && cmake --build ./build
       - name: Run tests
         run: ctest --test-dir ./build
+      - name: Init codeql
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
