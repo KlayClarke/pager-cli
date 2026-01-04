@@ -19,7 +19,7 @@ jobs:
       - name: Init codeql
         uses: github/codeql-action/init@v4
         with:
-          languages: ${{ matrix.language }}
+          languages: cpp
           queries: security-and-quality
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
