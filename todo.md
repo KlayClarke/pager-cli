@@ -1,0 +1,6 @@
+- [ ] Create server
+- [ ] Create client
+- [ ] Allow for communication between client and server
+- [ ] Allow for two clients to communicate using server as proxy (not sure if smart but not sure how else to do it)
+- [ ] Add cli intergration
+- [ ] Allow two users of cli to communicate with each other (id based?)
