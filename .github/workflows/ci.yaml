@@ -3,6 +3,9 @@ on: [push]
 jobs:
   google-test:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
     steps:
       - name: Check out repository code
         uses: actions/checkout@v5
@@ -10,7 +13,14 @@ jobs:
         run: |
             sudo apt update
             sudo apt install cmake g++ make
+      - name: Init codeql
+        uses: github/codeql-action/init@v4
+        with:
+          languages: cpp
+          queries: security-and-quality
       - name: Build solution
         run: cmake -S . -B ./build && cmake --build ./build
       - name: Run tests
         run: ctest --test-dir ./build
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4

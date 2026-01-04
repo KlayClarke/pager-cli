@@ -19,6 +19,7 @@ enable_testing()
 add_executable(
   test_main
   tests/test_main.cpp
+  src/main.cpp
 )
 
 target_link_libraries(
