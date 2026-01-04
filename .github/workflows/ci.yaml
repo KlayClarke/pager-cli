@@ -19,3 +19,5 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           queries: security-and-quality
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
