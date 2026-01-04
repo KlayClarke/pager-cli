@@ -42,3 +42,12 @@
 
 .vscode/*
 build/*
+bin/*
+lib/*
+_deps/*
+CMakeFiles/*
+*.cmake
+CMakeCache.txt
+Makefile
+test_main
+pager_cli

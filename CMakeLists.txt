@@ -16,14 +16,17 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(
-  test_main
-  tests/test_main.cpp
+add_executable(pager_cli
   src/main.cpp
+  src/server.cpp
 )
 
-target_link_libraries(
-  test_main
+add_executable(test_main
+  src/server.cpp
+  tests/test_main.cpp
+)
+
+target_link_libraries(test_main
   GTest::gtest_main
 )
 
