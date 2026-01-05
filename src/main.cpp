@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
     if (argc > 2) {
         for (size_t i = 0; i < argc; i++)
         {
-            if (argc > i+1 & (std::strcmp(argv[i], "-st") == 0) || (std::strcmp(argv[i], "--server-type") == 0)) {
+            if (argc > i+1 & ((std::strcmp(argv[i], "-st") == 0) || (std::strcmp(argv[i], "--server-type") == 0))) {
                 if (std::strcmp(argv[i+1], "hub") == 0) serverType = Hub;
                 else if (std::strcmp(argv[i+1], "client") == 0) serverType = Client;
                 break;
