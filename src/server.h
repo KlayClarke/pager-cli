@@ -1,3 +1,12 @@
+#ifndef SERVER_H
+#define SERVER_H
+
+enum ServerTypes {
+    Hub,
+    Client,
+    Uninitialized
+};
+
 class Server
 {
 private:
@@ -6,5 +15,8 @@ public:
     Server();
     ~Server();
     
+    void NewHub();
     void NewClient();
 };
+
+#endif //SERVER_H
