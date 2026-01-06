@@ -51,11 +51,20 @@ void Server::NewHub()
                 if (curRevents & POLLIN) {
                     char buffer[1024] = {0};
                     int bytesRecvd = recv(curFd, buffer, sizeof(buffer), 0);
-                    if (bytesRecvd > 0) std::cout << "Message from client " << curFd << ": " << buffer << std::endl;
+                    
+                    if (bytesRecvd > 0) {
+                        std::cout << "Message from client " << curFd << ": " << buffer << std::endl;
+                    }
+                    else if (bytesRecvd == 0) {
+                        std::cout << "Client " << curFd << " has closed its session." << std::endl;
+                    }
+                    else {
+                        std::cout << "Client " << curFd << " threw an error. Revents value is " << curRevents << std::endl;
+                    }
                 }
             }
         }
-    };
+    }
 }
 
 // Hub receives message from client, but when I quit client session, hub continues receiving empty messages from client
