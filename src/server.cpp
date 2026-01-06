@@ -32,30 +32,36 @@ void Server::NewHub()
 
     nfds_t nfds = 0;
     int pollTimeout = 0;
+
     while (poll(fds.data(), fds.size(), pollTimeout) >= 0)
     {
         for (size_t i = 0; i < fds.size(); i++)
         {
-            // if hubsocket:
             int curFd = fds[i].fd;
             int curRevents = fds[i].revents;
-            if (curFd == serverSocket && curRevents & POLLIN) {
-                int clientSocket;
-                if ((clientSocket = accept(serverSocket, nullptr, nullptr)) > 0) 
-                {
-                    fds.push_back({clientSocket, POLLOUT, 0});
+            if (curFd == serverSocket) {
+                if (curRevents & POLLIN) {
+                    int clientSocket;
+                    if ((clientSocket = accept(serverSocket, nullptr, nullptr)) > 0) 
+                    {
+                        fds.push_back({clientSocket, POLLOUT, 0});
+                    }
                 }
-            } else if (curFd != serverSocket) {
-                char buffer[1024] = {0};
-                recv(curFd, buffer, sizeof(buffer), 0);
-                std::cout << "Message from client " << curFd << ": " << buffer << std::endl;
+            } else {
+                std::cout << "curRevents: " << curRevents << std::endl;
+                if (curRevents & 0x38) continue; // Skip if POLLERR, POLLHUP, POLLNVAL set
+                else if (curRevents & POLLOUT) {
+                    char buffer[1024] = {0};
+                    recv(curFd, buffer, sizeof(buffer), 0);
+                    std::cout << "Message from client " << curFd << ": " << buffer << std::endl;
+                }
             }
         }
     };
 }
-
 // BUG: HUB only receives bytes after I close connection and start up again
 // ^ NEED TO REMOVE CLOSED SESSIONS FROM FDS
+// 00111000
 
 void Server::NewClient()
 {
@@ -73,9 +79,8 @@ void Server::NewClient()
     while (true) {
         std::cout << "Type q to quit. Anything else will be sent to hub" << std::endl;
         std::cin >> message;
+        
         if (message == "q") break;
-        char *message_data = message.data();
-        int message_size = message.size();
 
         int bytesSent = send(serverSocket, message.data(), message.size(), 0);
         std::cout << bytesSent << " bytes sent to hub" << std::endl;
