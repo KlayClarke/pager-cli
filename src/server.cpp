@@ -37,8 +37,8 @@ void Server::NewHub()
     {
         for (size_t i = 0; i < fds.size(); i++)
         {
-            int curFd = fds[i].fd;
-            int curRevents = fds[i].revents;
+            int curFd = fds.at(i).fd;
+            int curRevents = fds.at(i).revents;
             if (curFd == serverSocket) {
                 if (curRevents & POLLIN) {
                     int clientSocket;
