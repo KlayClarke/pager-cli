@@ -44,24 +44,21 @@ void Server::NewHub()
                     int clientSocket;
                     if ((clientSocket = accept(serverSocket, nullptr, nullptr)) > 0) 
                     {
-                        fds.push_back({clientSocket, POLLOUT, 0});
+                        fds.push_back({clientSocket, POLLIN, 0});
                     }
                 }
             } else {
-                std::cout << "curRevents: " << curRevents << std::endl;
-                if (curRevents & 0x38) continue; // Skip if POLLERR, POLLHUP, POLLNVAL set
-                else if (curRevents & POLLOUT) {
+                if (curRevents & POLLIN) {
                     char buffer[1024] = {0};
-                    recv(curFd, buffer, sizeof(buffer), 0);
-                    std::cout << "Message from client " << curFd << ": " << buffer << std::endl;
+                    int bytesRecvd = recv(curFd, buffer, sizeof(buffer), 0);
+                    if (bytesRecvd > 0) std::cout << "Message from client " << curFd << ": " << buffer << std::endl;
                 }
             }
         }
     };
 }
-// BUG: HUB only receives bytes after I close connection and start up again
-// ^ NEED TO REMOVE CLOSED SESSIONS FROM FDS
-// 00111000
+
+// Hub receives message from client, but when I quit client session, hub continues receiving empty messages from client
 
 void Server::NewClient()
 {
@@ -85,4 +82,7 @@ void Server::NewClient()
         int bytesSent = send(serverSocket, message.data(), message.size(), 0);
         std::cout << bytesSent << " bytes sent to hub" << std::endl;
     }
+
+    shutdown(serverSocket, SHUT_RDWR);
+    close(serverSocket);
 }
