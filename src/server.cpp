@@ -58,7 +58,7 @@ void Server::NewHub()
                         std::cout << "Client " << curFd << " has closed its session." << std::endl;
 
                         // Remove closed fd from fds vector
-                        fds.erase(std::next(fds.begin(), i));
+                        fds.erase(fds.begin() + i);
                     }
                     else {
                         std::cout << "Client " << curFd << " threw an error. Revents value is " << curRevents << std::endl;
