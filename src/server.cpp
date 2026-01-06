@@ -30,7 +30,6 @@ void Server::NewHub()
     std::vector<pollfd> fds = std::vector<pollfd>();
     fds.push_back({serverSocket, POLLIN, 0});
 
-    nfds_t nfds = 0;
     int pollTimeout = 0;
     while (poll(fds.data(), fds.size(), pollTimeout) >= 0)
     {
