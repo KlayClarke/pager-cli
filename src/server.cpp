@@ -1,0 +1,96 @@
+#include <cstring>
+#include <iostream>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <poll.h>
+#include <vector>
+#include "server.h"
+
+Server::Server() {}
+
+Server::~Server()
+{
+    close(serverSocket);
+}
+
+void Server::NewHub()
+{
+    std::cout << "Created new hub!" << std::endl;
+    serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+
+    sockaddr_in serverAddress;
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_port = htons(8080);
+    serverAddress.sin_addr.s_addr = INADDR_ANY;
+
+    bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress));
+    listen(serverSocket, 5);
+
+    std::vector<pollfd> fds = std::vector<pollfd>();
+    fds.push_back({serverSocket, POLLIN, 0});
+
+    int pollTimeout = 0;
+    while (poll(fds.data(), fds.size(), pollTimeout) >= 0)
+    {
+        for (size_t i = 0; i < fds.size(); i++)
+        {
+            int curFd = fds.at(i).fd;
+            int curRevents = fds.at(i).revents;
+            if (curFd == serverSocket) {
+                if (curRevents & POLLIN) {
+                    int clientSocket;
+                    if ((clientSocket = accept(serverSocket, nullptr, nullptr)) > 0) 
+                    {
+                        fds.push_back({clientSocket, POLLIN, 0});
+                    }
+                }
+            } else {
+                if (curRevents & POLLIN) {
+                    char buffer[1024] = {0};
+                    int bytesRecvd = recv(curFd, buffer, sizeof(buffer), 0);
+                    
+                    if (bytesRecvd > 0) {
+                        std::cout << "Message from client " << curFd << ": " << buffer << std::endl;
+                    }
+                    else if (bytesRecvd == 0) {
+                        std::cout << "Client " << curFd << " has closed its session." << std::endl;
+
+                        // Remove closed fd from fds vector
+                        fds.erase(fds.begin() + i);
+                    }
+                    else {
+                        std::cout << "Client " << curFd << " threw an error. Revents value is " << curRevents << std::endl;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void Server::NewClient()
+{
+    std::cout << "Created new client!" << std::endl;
+    serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+
+    sockaddr_in serverAddress;
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_port = htons(8080);
+    serverAddress.sin_addr.s_addr = INADDR_ANY;
+
+    connect(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress));
+
+    std::string message = "";
+    while (true) {
+        std::cout << "Type q to quit. Anything else will be sent to hub" << std::endl;
+        std::cin >> message;
+        
+        if (message == "q") break;
+
+        int bytesSent = send(serverSocket, message.data(), message.size(), 0);
+        std::cout << bytesSent << " bytes sent to hub" << std::endl;
+    }
+
+    shutdown(serverSocket, SHUT_RDWR);
+    close(serverSocket);
+}
