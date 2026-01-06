@@ -32,7 +32,6 @@ void Server::NewHub()
 
     nfds_t nfds = 0;
     int pollTimeout = 0;
-
     while (poll(fds.data(), fds.size(), pollTimeout) >= 0)
     {
         for (size_t i = 0; i < fds.size(); i++)
@@ -57,6 +56,9 @@ void Server::NewHub()
                     }
                     else if (bytesRecvd == 0) {
                         std::cout << "Client " << curFd << " has closed its session." << std::endl;
+
+                        // Remove closed fd from fds vector
+                        fds.erase(std::next(fds.begin(), i));
                     }
                     else {
                         std::cout << "Client " << curFd << " threw an error. Revents value is " << curRevents << std::endl;
