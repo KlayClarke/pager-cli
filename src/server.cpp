@@ -69,8 +69,6 @@ void Server::NewHub()
     }
 }
 
-// Hub receives message from client, but when I quit client session, hub continues receiving empty messages from client
-
 void Server::NewClient()
 {
     std::cout << "Created new client!" << std::endl;
